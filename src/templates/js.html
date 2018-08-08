@@ -1,0 +1,38 @@
+<script>
+    function dosomethings() {
+        var api_url = '{{ url }}/api/next?r=' + new Date().getTime(); // TODO API:next_url
+        // var api_url = '{{ url }}/static/a.json';
+        axios.get(api_url).then(
+            function (response) {
+                console.log(response);
+                try {
+                    var data = response.data;
+                    console.log(data);
+                    switch (data['type']) {
+                        case 'html':
+                            window.location.href = data['url'];
+                            break;
+                        case 'json':
+                            axios.get(data['url']).then(
+                                function (response) {
+                                    console.log(response);
+                                }
+                            );
+                            break;
+                        case 'none':
+                            window.location = '{{ url }}/api/sleep';
+                            break;
+                        default:
+                            console.log('[ERROR] Unknow nexurl resp.\n');
+                            console.log(data);
+                    }
+                } catch (err) {
+                    console.log('[ERROR] ' + err + '\n' );
+                    console.log(response);
+                }
+            }
+        );
+    }
+
+    setInterval(dosomethings(), {{ time }});
+</script>
